@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import User, Product
 
+
 # --- LOGIN VIEW --- #
 def login_view(request):
     if 'user_email' in request.session:
@@ -13,7 +14,7 @@ def login_view(request):
 
         if not email or not password:
             messages.error(request, "Please enter both email and password.")
-            return render(request, 'slooze/index.html')
+            return redirect('login')
 
         try:
             user = User.objects.get(email=email)
@@ -29,38 +30,44 @@ def login_view(request):
     return render(request, 'slooze/index.html')
 
 
-# --- SIGNUP VIEW --- #
+
+# --- SIGNUP VIEW (New Page) --- #
 def signup_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
 
         if not email or not password:
-            messages.error(request, "Please fill in all fields.")
-            return render(request, 'slooze/index.html')
+            messages.error(request, "Please enter email and password.")
+            return redirect('signup')
 
+        # Check if user already exists
         if User.objects.filter(email=email).exists():
-            messages.error(request, "Email already exists. Please log in.")
+            messages.error(request, "Email already exists. Please login.")
             return redirect('login')
 
+        # Create new user
         User.objects.create(email=email, password=password)
-        request.session['user_email'] = email
-        return redirect('home')
+        messages.success(request, "Account created successfully. Please login now.")
+        return redirect('login')
 
-    return render(request, 'slooze/index.html')
+    return render(request, 'slooze/signup.html')
 
 
-# --- HOME PAGE (after login) --- #
+
+# --- HOME PAGE (AFTER LOGIN) --- #
 def home_view(request):
     if 'user_email' not in request.session:
         return redirect('login')
     return render(request, 'slooze/home.html')
 
 
+
 # --- LOGOUT --- #
 def logout_view(request):
     request.session.flush()
     return redirect('login')
+
 
 
 # --- DASHBOARD PAGE --- #
@@ -72,13 +79,15 @@ def dashboard_view(request):
     return render(request, 'slooze/dashboard.html', {'recent_sales': recent_sales})
 
 
+
 # --- PRODUCTS PAGE --- #
 def products_view(request):
     products = Product.objects.all()
     return render(request, 'slooze/products.html', {'products': products})
 
 
-# --- ADD/EDIT PAGE --- #
+
+# --- ADD / EDIT PRODUCT PAGE --- #
 def addedit_view(request):
     if request.method == "POST":
         name = request.POST.get("name")

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+  <style>
+
+    body, html { height: 100%; margin: 0; font-family: 'Poppins', sans-serif; }
+    .login-container { display: flex; height: 100vh; overflow: hidden; }
+    .form-section { flex: 0.7; display: flex; justify-content: center; align-items: center; padding: 40px; background-color: #fff; }
+    .form-box { width: 100%; max-width: 380px; }
+    .form-box h2 { text-align: center; font-weight: 700; margin-bottom: 10px; color: #1a202c; }
+    .form-box p { text-align: center; color: #666; margin-bottom: 30px; }
+    .btn-primary { background-color: #7b4bff; border: none; border-radius: 25px; width: 100%; padding: 12px; font-weight: 600; }
+    .btn-primary:hover { background-color: #693bdb; }
+    .login-link { text-align: center; margin-top: 15px; }
+    .login-link a { color: #7b4bff; text-decoration: none; font-weight: 500; }
+    .image-section { flex: 0.5; background: url('https://wallpapershome.com/images/pages/ico_v/25691.jpg') center center / cover no-repeat; height: 100vh; }
+  </style>
+
+</head>
+<body>
+
+<div class="login-container">
+  <div class="form-section">
+    <div class="form-box">
+      <h2>Create Account</h2>
+      <p>Sign up in seconds</p>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-danger text-center py-2">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="POST" action="{% url 'signup' %}">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input type="text" name="name" class="form-control" placeholder="Enter your name" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control" placeholder="Create password" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Sign Up</button>
+      </form>
+
+      <div class="login-link">
+        <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="image-section"></div>
+</div>
+
+</body>
+</html>
