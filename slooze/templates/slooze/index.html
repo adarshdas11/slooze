@@ -1,0 +1,211 @@
+{% if request.session.user_email %}
+<p>Welcome, {{ request.session.user_email }}!</p>
+<a href="{% url 'logout' %}">Logout</a>
+{% endif %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login / Sign Up</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+  <style>
+    body,
+    html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .login-container {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .form-section {
+      flex: 0.7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      background-color: #fff;
+    }
+
+    .form-box {
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .form-box h2 {
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #1a202c;
+    }
+
+    .form-box p {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    .btn-primary {
+      background-color: #7b4bff;
+      border: none;
+      border-radius: 25px;
+      width: 100%;
+      padding: 12px;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background-color: #693bdb;
+    }
+
+    .form-check-input:checked {
+      background-color: #7b4bff;
+      border-color: #7b4bff;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .login-link a {
+      color: #7b4bff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    .btn-social {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 25px;
+      background-color: white;
+      font-weight: 500;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-social:hover {
+      background-color: #f8f9fa;
+      border-color: #aaa;
+    }
+
+    .btn-social i {
+      margin-right: 10px;
+      font-size: 18px;
+    }
+
+    .btn-google {
+      color: #757575;
+    }
+
+    .btn-facebook {
+      color: #1877F2;
+      border-color: #1877F2;
+    }
+
+    .btn-facebook:hover {
+      background-color: #f0f4ff;
+    }
+
+    .image-section {
+      flex: 0.5;
+      position: relative;
+      background: url('https://wallpapershome.com/images/pages/ico_v/25691.jpg') center center / cover no-repeat;
+      height: 100vh;
+      width: 100%;
+    }
+
+    .image-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.40));
+    }
+
+    @media (max-width: 992px) {
+      .image-section {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <div class="form-section">
+      <div class="form-box">
+        <h2>Welcome Back</h2>
+        <p>Sign Up For Free</p>
+
+        <!-- Message Alerts -->
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-danger text-center py-2">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+
+        <!-- Login Form -->
+        <form method="POST" action="{% url 'login' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+          </div>
+          <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" id="terms" required>
+            <label class="form-check-label" for="terms">
+              I agree to all Terms, Privacy Policy and fees
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary">Get Started</button>
+        </form>
+
+        <!-- Signup Link -->
+        <div class="login-link">
+          <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+        </div>
+
+        <br>
+
+        <!-- Social login buttons -->
+        <div class="social-login">
+          <button class="btn btn-google btn-social">
+            <i class="fab fa-google"></i> Continue with Google
+          </button>
+          <button class="btn btn-facebook btn-social">
+            <i class="fab fa-facebook-f"></i> Continue with Facebook
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="image-section"></div>
+  </div>
+</body>
+
+</html>

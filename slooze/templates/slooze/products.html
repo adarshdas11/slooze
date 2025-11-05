@@ -1,0 +1,76 @@
+{% extends 'slooze/base.html' %}
+{% block title %}Products - Slooze{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="fw-bold text-dark">Product</h2>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+    <div>
+      <button class="btn btn-sm btn-outline-secondary me-2 active">Published</button>
+      <button class="btn btn-sm btn-outline-secondary">Draft</button>
+    </div>
+    <div>
+      <button class="btn btn-sm btn-outline-primary me-2"><i class="fas fa-filter me-1"></i> Filter</button>
+      <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-download me-1"></i> Download</button>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead class="table-light">
+          <tr>
+            <th><input type="checkbox"></th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Manage</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in products %}
+          <tr>
+            <td><input type="checkbox"></td>
+            <td>{{ p.name }}</td>
+            <td>{{ p.category }}</td>
+            <td>₹{{ p.price }}</td>
+            <td>{{ p.stock }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-edit"></i> Edit</button>
+              <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i> Delete</button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm p-3">
+  <h6 class="fw-bold mb-3">Total Views</h6>
+  <canvas id="viewsChart" height="120"></canvas>
+</div>
+
+<script>
+  const ctx = document.getElementById('viewsChart');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Nov 20', 'Nov 25', 'Nov 30', 'Dec 5', 'Dec 10', 'Dec 20'],
+      datasets: [{
+        label: 'Views',
+        data: [3000, 5200, 4800, 6500, 7100, 8500],
+        borderColor: '#7b4bff',
+        fill: false,
+        tension: 0.3
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+</script>
+{% endblock %}
