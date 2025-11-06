@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import User, Product
 
@@ -30,7 +30,6 @@ def login_view(request):
     return render(request, 'slooze/index.html')
 
 
-
 # --- SIGNUP VIEW (New Page) --- #
 def signup_view(request):
     if request.method == 'POST':
@@ -41,18 +40,15 @@ def signup_view(request):
             messages.error(request, "Please enter email and password.")
             return redirect('signup')
 
-        # Check if user already exists
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email already exists. Please login.")
             return redirect('login')
 
-        # Create new user
         User.objects.create(email=email, password=password)
         messages.success(request, "Account created successfully. Please login now.")
         return redirect('login')
 
     return render(request, 'slooze/signup.html')
-
 
 
 # --- HOME PAGE (AFTER LOGIN) --- #
@@ -62,12 +58,10 @@ def home_view(request):
     return render(request, 'slooze/home.html')
 
 
-
 # --- LOGOUT --- #
 def logout_view(request):
     request.session.flush()
     return redirect('login')
-
 
 
 # --- DASHBOARD PAGE --- #
@@ -79,18 +73,16 @@ def dashboard_view(request):
     return render(request, 'slooze/dashboard.html', {'recent_sales': recent_sales})
 
 
-
 # --- PRODUCTS PAGE --- #
 def products_view(request):
     products = Product.objects.all()
     return render(request, 'slooze/products.html', {'products': products})
 
 
-
 # --- ADD / EDIT PRODUCT PAGE --- #
 def addedit_view(request):
     if request.method == "POST":
-        name = request.POST.get("name")
+        name = request.POST.get("product_name")
         category = request.POST.get("category")
         description = request.POST.get("description")
         price = request.POST.get("price")
@@ -106,3 +98,29 @@ def addedit_view(request):
         return redirect('products')
 
     return render(request, 'slooze/addedit.html')
+
+
+# --- EDIT PRODUCT VIEW (Updated) --- #
+def edit_product_view(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.method == "POST":
+        product.name = request.POST.get("name", "").strip()
+        product.category = request.POST.get("category", "").strip()
+        product.price = request.POST.get("price", 0)
+        product.stock = request.POST.get("stock", 0)
+
+        if product.name == "":
+            return redirect("products")
+
+        product.save()
+        return redirect("products")
+
+    return redirect("products")
+
+
+# --- DELETE PRODUCT VIEW --- #
+def delete_product_view(request, id):
+    product = Product.objects.get(id=id)
+    product.delete()
+    return redirect('products')

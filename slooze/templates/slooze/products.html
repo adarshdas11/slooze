@@ -4,6 +4,9 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h2 class="fw-bold text-dark">Product</h2>
+  <a href="{% url 'addedit' %}" class="btn btn-primary">
+    <i class="fas fa-plus me-2"></i>Add New Product
+  </a>
 </div>
 
 <div class="card border-0 shadow-sm mb-4">
@@ -20,7 +23,7 @@
 
   <div class="card-body">
     <div class="table-responsive">
-      <table class="table align-middle">
+      <table class="table table-hover align-middle">
         <thead class="table-light">
           <tr>
             <th><input type="checkbox"></th>
@@ -33,17 +36,57 @@
         </thead>
         <tbody>
           {% for p in products %}
-          <tr>
+          <!-- Normal View Row -->
+          <tr id="row-view-{{ p.id }}">
             <td><input type="checkbox"></td>
             <td>{{ p.name }}</td>
             <td>{{ p.category }}</td>
             <td>₹{{ p.price }}</td>
             <td>{{ p.stock }}</td>
             <td>
-              <button class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-edit"></i> Edit</button>
-              <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i> Delete</button>
+              <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow({{ p.id }})">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+
+              <form action="{% url 'delete_product' p.id %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger"
+                  onclick="return confirm('Delete this product?')">
+                  <i class="fas fa-trash"></i> Delete
+                </button>
+              </form>
             </td>
           </tr>
+
+          <!-- Edit Row (Correct Table-Safe Form Structure) -->
+          <tr id="row-edit-{{ p.id }}" style="display:none;">
+            <td><input type="checkbox" disabled></td>
+
+            <td>
+              <form action="{% url 'edit_product' p.id %}" method="post">
+                {% csrf_token %}
+                <input type="text" class="form-control" name="name" value="{{ p.name }}">
+            </td>
+
+            <td>
+                <input type="text" class="form-control" name="category" value="{{ p.category }}">
+            </td>
+
+            <td>
+                <input type="number" class="form-control" name="price" value="{{ p.price }}">
+            </td>
+
+            <td>
+                <input type="number" class="form-control" name="stock" value="{{ p.stock }}">
+            </td>
+
+            <td>
+                <button type="submit" class="btn btn-sm btn-success me-1">Save</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="cancelEdit({{ p.id }})">Cancel</button>
+              </form>
+            </td>
+          </tr>
+
           {% endfor %}
         </tbody>
       </table>

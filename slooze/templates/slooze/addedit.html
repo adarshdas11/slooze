@@ -2,104 +2,108 @@
 {% block content %}
 
 <div class="container-fluid py-4" style="background-color: #f8f9fa; min-height: 100vh;">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold">Add Product</h3>
-        <div>
-            <a href="{% url 'products' %}" class="btn btn-outline-danger me-2">Discard Change</a>
-            <button type="submit" form="productForm" class="btn btn-primary px-4">Save Product</button>
-        </div>
-    </div>
 
-    <div class="row">
-        <!-- Left Form Section -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm p-4 mb-4">
-                <h5 class="fw-semibold mb-3">General Information</h5>
-                <form method="POST" id="productForm">
-                    {% csrf_token %}
+    <!-- Form Starts Here -->
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold">{% if product %}Edit Product{% else %}Add Product{% endif %}</h3>
+            <div>
+                <a href="{% url 'products' %}" class="btn btn-outline-danger me-2">Discard Change</a>
+                <button type="submit" class="btn btn-primary px-4">Save</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Left Form Section -->
+            <div class="col-lg-8">
+
+                <!-- General Information -->
+                <div class="card border-0 shadow-sm p-4 mb-4">
+                    <h5 class="fw-semibold mb-3">General Information</h5>
+
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Product Name</label>
-                        <input type="text" name="name" class="form-control" placeholder="Enter product name" required>
+                        <input type="text" class="form-control" name="product_name"
+                               value="{{ product.name|default:'' }}" placeholder="Enter product name" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Product Category</label>
-                        <select name="category" class="form-select" required>
-                            <option value="" disabled selected>Select category</option>
-                            <option>Clothing</option>
-                            <option>Accessories</option>
-                            <option>Electronics</option>
+                        <select class="form-select" name="category" required>
+                            <option value="">Select category</option>
+                            <option value="Clothing" {% if product.category == "Clothing" %}selected{% endif %}>Clothing</option>
+                            <option value="Accessories" {% if product.category == "Accessories" %}selected{% endif %}>Accessories</option>
+                            <option value="Electronics" {% if product.category == "Electronics" %}selected{% endif %}>Electronics</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Description</label>
-                        <textarea name="description" class="form-control" rows="4" placeholder="Enter description"></textarea>
+                        <textarea class="form-control" rows="4" name="description"
+                                  placeholder="Enter description">{{ product.description|default:'' }}</textarea>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Tag Keywords</label>
-                        <input type="text" class="form-control" placeholder="Add tags separated by commas">
+                        <input type="text" class="form-control" name="tags"
+                               value="{{ product.tags|default:'' }}" placeholder="Add tags separated by commas">
                     </div>
-                
+                </div>
+
+                <!-- Pricing Section -->
+                <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-semibold mb-3">Pricing</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Price</label>
+                            <input type="number" class="form-control" name="price"
+                                   value="{{ product.price|default:'' }}" placeholder="Enter price" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Stock</label>
+                            <input type="number" class="form-control" name="stock"
+                                   value="{{ product.stock|default:'' }}" placeholder="Enter stock quantity" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Discount</label>
+                            <input type="number" class="form-control" name="discount"
+                                   value="{{ product.discount|default:'' }}" placeholder="Discount amount">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Discount Category</label>
+                            <select class="form-select" name="discount_category">
+                                <option value="">Select category</option>
+                                <option value="Festival Offer" {% if product.discount_category == "Festival Offer" %}selected{% endif %}>Festival Offer</option>
+                                <option value="Clearance Sale" {% if product.discount_category == "Clearance Sale" %}selected{% endif %}>Clearance Sale</option>
+                                <option value="New Arrival" {% if product.discount_category == "New Arrival" %}selected{% endif %}>New Arrival</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="card border-0 shadow-sm p-4">
-                <h5 class="fw-semibold mb-3">Pricing</h5>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Price</label>
-                        <input type="number" name="price" step="0.01" class="form-control" placeholder="Enter price" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Discount</label>
-                        <input type="number" class="form-control" placeholder="Discount amount">
-                    </div>
+            <!-- Right Image Upload Section -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm p-4 mb-4">
+                    <h6 class="fw-semibold mb-3">Preview Product</h6>
+                    <input type="file" name="preview_image" class="form-control">
                 </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Stock</label>
-                        <input type="number" name="stock" class="form-control" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Discount Category</label>
-                        <select class="form-select">
-                            <option>Select category</option>
-                            <option>Festival Offer</option>
-                            <option>Clearance Sale</option>
-                            <option>New Arrival</option>
-                        </select>
-                    </div>
+
+                <div class="card border-0 shadow-sm p-4">
+                    <h6 class="fw-semibold mb-3">Thumbnail Product</h6>
+                    <input type="file" name="thumbnail_image" class="form-control">
                 </div>
-                </form>
             </div>
         </div>
 
-        <!-- Right Image Upload Section -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm p-4 mb-4">
-                <h6 class="fw-semibold mb-3">Preview Product</h6>
-                <div class="border border-2 border-dashed rounded d-flex align-items-center justify-content-center"
-                    style="height: 180px; background: #f9fafb;">
-                    <div class="text-center text-muted">
-                        <i class="fas fa-image fa-2x mb-2"></i>
-                        <p class="m-0">Drag and drop your image here</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card border-0 shadow-sm p-4">
-                <h6 class="fw-semibold mb-3">Thumbnail Product</h6>
-                <div class="border border-2 border-dashed rounded d-flex align-items-center justify-content-center"
-                    style="height: 180px; background: #f9fafb;">
-                    <div class="text-center text-muted">
-                        <i class="fas fa-image fa-2x mb-2"></i>
-                        <p class="m-0">Drag and drop your image here</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    </form>
+    <!-- Form Ends Here -->
 
     <!-- Footer Section -->
     <footer class="mt-5 py-4 border-top">
@@ -147,6 +151,7 @@
             <small>2024 MaxFit — Twitter — Instagram — Facebook</small>
         </div>
     </footer>
+
 </div>
 
 {% endblock %}

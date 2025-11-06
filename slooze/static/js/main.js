@@ -47,3 +47,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// Inline row editing functions
+function editRow(id) {
+  document.getElementById("row-view-" + id).style.display = "none";
+  document.getElementById("row-edit-" + id).style.display = "table-row";
+}
+
+function cancelEdit(id) {
+  document.getElementById("row-edit-" + id).style.display = "none";
+  document.getElementById("row-view-" + id).style.display = "table-row";
+}
